@@ -8,11 +8,13 @@ pipeline {
 
     stages {
 
-        stage('Checkout') {
-            steps {
-                git branch: 'main',
-                    url: 'https://github.com/Ananya-Nemalapuri/student-app.git'
-            }
+       stage('Clone') {
+    steps {
+        git branch: 'main',
+            url: 'https://github.com/Ananya-Nemalapuri/student-app.git'
+    }
+}
+
         }
 
         stage('Build Docker Image') {
