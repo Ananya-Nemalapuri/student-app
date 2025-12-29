@@ -1,33 +1,31 @@
 pipeline {
     agent any
 
-    environment {
-        IMAGE_NAME = "ananya2dsu/student-app"
-        IMAGE_TAG  = "${env.BUILD_ID}"
-    }
-
     stages {
 
-       stage('Clone') {
-    steps {
-        git branch: 'main',
-            url: 'https://github.com/Ananya-Nemalapuri/student-app.git'
-    }
-}
-
+        stage('Clone') {
+            steps {
+                git branch: 'main',
+                    url: 'https://github.com/Ananya-Nemalapuri/student-app.git'
+            }
         }
 
         stage('Build Docker Image') {
             steps {
-                sh 'docker build -t $IMAGE_NAME:$IMAGE_TAG .'
+                sh 'docker build -t ananya2dsu/student-app .'
             }
         }
 
-        stage('Unit Tests') {
+        stage('Push Docker Image') {
             steps {
-                sh 'pytest -q || true'
+                withCredentials([string(credentialsId: 'dockerhub-pass', variable: 'PASS')]) {
+                    sh '''
+                        echo $PASS | docker login -u ananya2dsu --password-stdin
+                        docker push ananya2dsu/student-app
+                    '''
+                }
             }
         }
+
     }
 }
-
